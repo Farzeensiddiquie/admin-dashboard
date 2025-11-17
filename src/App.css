@@ -1,0 +1,64 @@
+@import "tailwindcss";
+* {
+   
+    box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+/* Customize the entire scrollbar */
+::-webkit-scrollbar {
+  width: 10px; /* Adjust width as needed */
+}
+
+/* Make the scrollbar track transparent */
+::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 20px;
+}
+
+/* Make the scrollbar thumb transparent or semi-transparent */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); 
+  border-radius: 5px; 
+}
+  
+
+body {
+    height: 100vh;
+    width: 100vw;
+    
+}
+.bg-img {
+  background-image: url(./assets/bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+.bg-img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6); /* black mask with 60% opacity */
+}
+
+.card-gradient-purple {
+  background: 
+    radial-gradient(circle at 92% 92%, rgba(138, 92, 246, 0.629) 0%, rgba(138, 92, 246, 0.53) 20%, #47454895 50%);
+}
+
+.card-gradient-green {
+  background: 
+    radial-gradient(circle at 92% 92%, rgba(34, 197, 94, 0.688) 0%, rgba(34, 197, 94, 0.49) 20%, #47454895 50%);
+}
+
+.card-gradient-amber {
+  background: 
+    radial-gradient(circle at 92% 92%, rgba(251, 190, 36, 0.515) 0%, rgba(251, 190, 36, 0.444) 20%,  #47454895 50%);
+}
+
+.card-gradient-cyan {
+  background: 
+    radial-gradient(circle at 92% 92%, rgba(219, 255, 38, 0.718) 0%, rgba(221, 255, 0, 0.433) 20%, #47454895 50%);
+}
