@@ -1,4 +1,3 @@
-import Dropdown from './Dropdown'
 import UserNavIcons from './UserNavIcons'
 import ReloadButton from './ReloadButton'
 const AdminNav = () => {
@@ -9,7 +8,6 @@ const AdminNav = () => {
         <h1 className='text-white font-bold text-xl '>Dashboard</h1>
         <ReloadButton/>
          </div>
-       <Dropdown/>
     </div>
     <UserNavIcons/>
     </div>

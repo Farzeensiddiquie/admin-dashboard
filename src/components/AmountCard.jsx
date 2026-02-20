@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
+import { TaskContext } from '../context/BillContext';
 import "../App.css";
 
-const AmountCard = ({
-  TradesDone =90,
-  TradesLeft= 45,
-  label = "Your Trading Performance",
-}) => {
-  // Gauge settings
-  const totalTrades = TradesDone + TradesLeft;
-  const percent = totalTrades > 0 ? Math.round((TradesDone / totalTrades) * 100) : 0;
+const AmountCard = () => {
+  const { getTaskStats, tasks } = useContext(TaskContext);
+  const stats = getTaskStats();
+
+  // Calculate hours progress
+  const totalEstimatedHours = tasks.reduce((sum, t) => sum + t.estimatedHours, 0);
+  const hoursCompleted = stats.totalHoursLogged;
+  const hoursRemaining = Math.max(0, totalEstimatedHours - hoursCompleted);
+  
+  const percent = totalEstimatedHours > 0 ? Math.round((hoursCompleted / totalEstimatedHours) * 100) : 0;
   const radius = 65;
   const centerX = 80;
   const centerY = 110;
@@ -30,7 +33,7 @@ const AmountCard = ({
 
   return (
     <div
-      className="card-gradient-cyan rounded-2xl mb-5 sm:mb-0 sm:w-[320px] w-[240px] h-[335px] shadow-lg p-5 relative overflow-hidden flex flex-col justify-start"
+      className="card-gradient-cyan rounded-2xl mb-5 sm:mb-0 sm:w-[320px] min-w-[240px] h-[335px] shadow-lg p-5 relative overflow-hidden flex flex-col justify-start"
     >
       {/* Dots menu */}
       <div className="absolute top-4 right-4">
@@ -87,7 +90,7 @@ const AmountCard = ({
       <div
         className="border border-white/20 rounded-xl mt-0 px-3 py-6 text-center relative min-h-[120px] bg-white/5 backdrop-blur-sm flex flex-col items-center justify-center"
       >
-        {/* Shuffle Icon */}
+        {/* Clock Icon */}
         <svg
           width="32"
           height="32"
@@ -95,23 +98,17 @@ const AmountCard = ({
           fill="none"
           className="mx-auto mb-2 block"
         >
-          <path
-            d="M4 9V4h5M20 15v5h-5M15 4h5v5M4 15v5h5"
-            stroke="#fff"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.7"
-          />
+          <circle cx="12" cy="12" r="9" stroke="#fff" strokeWidth="2" opacity="0.7" />
+          <path d="M12 7v5l4 2" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
         </svg>
         <div className="text-[#A1A1A1] font-semibold text-[17px] opacity-80 mb-2 mt-1">
-          {label}
+          Hours Analytics
         </div>
         <div className="text-white flex font-extrabold text-[0.9rem] gap-1 tracking-wide mb-1">
-          <p className="text-[#A1A1A1]">Trades Performed:</p> {TradesDone}
+          <p className="text-[#A1A1A1]">Logged:</p> {hoursCompleted}h
         </div>
         <div className="text-white font-semibold text-[16px] opacity-80 flex gap-1 items-center">
-       <p className="text-xs text-[#A1A1A1]">Trades Left in This Month :</p>{TradesLeft}
+          <p className="text-xs text-[#A1A1A1]">Remaining :</p>{hoursRemaining}h
         </div>
       </div>
     </div>

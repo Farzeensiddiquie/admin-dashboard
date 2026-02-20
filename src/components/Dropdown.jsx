@@ -1,11 +1,21 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dropdown() {
   const [selected, setSelected] = useState("Financial");
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const options = ["Financial", "Transactions", "Invoices", "Payroll"];
+
+  // Route mapping for navbar options
+  const routeMap = {
+    "Financial": "/",
+    "Transactions": "/tasks",
+    "Invoices": "/tasks",
+    "Payroll": "/tasks",
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -17,6 +27,16 @@ export default function Dropdown() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleOptionSelect = (opt) => {
+    setSelected(opt);
+    setOpen(false);
+    // Navigate based on selected option
+    const route = routeMap[opt];
+    if (route) {
+      navigate(route);
+    }
+  };
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
@@ -43,11 +63,8 @@ export default function Dropdown() {
           <button
             id={opt.toLowerCase().replace(/\s+/g, "-")}
             key={opt}
-            onClick={() => {
-              setSelected(opt);
-              setOpen(false);
-            }}
-            className="block w-full text-left rounded-sm px-4 py-2 hover:bg-gray-400/10 text-white text-sm"
+            onClick={() => handleOptionSelect(opt)}
+            className="block w-full text-left rounded-sm px-4 py-2 hover:bg-gray-400/10 text-white text-sm transition-colors"
           >
             {opt}
           </button>

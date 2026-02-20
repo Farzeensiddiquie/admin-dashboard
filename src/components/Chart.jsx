@@ -1,19 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { TaskContext } from '../context/BillContext';
 
 const BAR_COLORS = ["#b6d13a", "#b6d13a", "#b6d13a", "#b6d13a", "#b6d13a", "#b6d13a"];
 const HIGHLIGHT_COLOR = "#a2d13a";
 
-const Chart = ({
-  data = [
-    { label: "Mar", value: 60, tooltip: "March 2025" },
-    { label: "Apr", value: 90, tooltip: "April 2025" },
-    { label: "May", value: 65, tooltip: "May 2025" },
-    { label: "Jun", value: 100, tooltip: "June 2025" },
-    { label: "Jul", value: 80, tooltip: "July 2025" },
-    { label: "Aug", value: 55, tooltip: "August 2025" },
-  ],
-}) => {
+const Chart = () => {
+  const { tasks } = useContext(TaskContext);
   const [hovered, setHovered] = useState(null);
+
+  // Generate monthly average data
+  const monthlyData = [
+    { label: "Jan", tooltip: "January" },
+    { label: "Feb", tooltip: "February" },
+    { label: "Mar", tooltip: "March" },
+    { label: "Apr", tooltip: "April" },
+    { label: "May", tooltip: "May" },
+    { label: "Jun", tooltip: "June" },
+  ];
+
+  // Calculate total hours per month (based on task.dueDate)
+  const currentYear = new Date().getFullYear();
+  const data = monthlyData.map((month, idx) => {
+    const monthIndex = idx; // Jan = 0
+    const monthSum = tasks.reduce((sum, task) => {
+      if (!task.dueDate) return sum;
+      const d = new Date(task.dueDate);
+      if (d.getFullYear() !== currentYear) return sum;
+      if (d.getMonth() === monthIndex) return sum + (task.hoursLogged || 0);
+      return sum;
+    }, 0);
+    return {
+      label: month.label,
+      value: monthSum,
+      tooltip: `${month.tooltip}: ${monthSum}h`,
+    };
+  });
 
   // Fixed desktop chart dimensions
   const width = 500;
@@ -22,14 +43,14 @@ const Chart = ({
   const barHeightMax = 220;
   const barWidth = 44;
   const gap = 24;
-  const maxValue = Math.max(...data.map((d) => d.value), 100);
+  const maxValue = Math.max(...data.map((d) => d.value), 1);
 
   return (
     <div className="w-full ml-2 sm:ml-20 max-w-[500px] flex items-end relative">
       <svg
         viewBox={`0 0 ${width} ${height}`}
         width="100%"
-        height="auto"
+        height={height}
         preserveAspectRatio="xMidYMid meet"
         className="block"
       >

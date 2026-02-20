@@ -1,47 +1,6 @@
+import { useContext } from 'react';
 import { FaUserAlt, FaThLarge, FaClock, FaVideo } from "react-icons/fa";
-
-const cards = [
-  {
-    id: 1,
-    icon: <FaUserAlt size={26} />,
-    gradient: "card-gradient-purple",
-    progressColor: "text-purple-400",
-    topText: "Ready to assign",
-    mainValue: "200 - 42",
-    bottomText: "Bill in this week 221",
-    progress: 42,
-  },
-  {
-    id: 2,
-    icon: <FaThLarge size={26} />,
-    gradient: "card-gradient-green",
-    progressColor: "text-green-400",
-    topText: "Tasks Completed",
-    mainValue: "120 / 200",
-    bottomText: "Remaining: 80",
-    progress: 60,
-  },
-  {
-    id: 3,
-    icon: <FaClock size={26} />,
-    gradient: "card-gradient-amber",
-    progressColor: "text-amber-400",
-    topText: "Hours Logged",
-    mainValue: "35h",
-    bottomText: "This week 40h",
-    progress: 88,
-  },
-  {
-    id: 4,
-    icon: <FaVideo size={26} />,
-    gradient: "card-gradient-cyan",
-    progressColor: "text-yellow-300",
-    topText: "Meetings",
-    mainValue: "18 Calls",
-    bottomText: "Scheduled: 18",
-    progress: 100,
-  },
-];
+import { TaskContext } from '../context/BillContext';
 
 const Card = ({ icon, gradient, progressColor, topText, mainValue, bottomText, progress }) => {
   const circleLength = 126; // circumference of circle
@@ -97,6 +56,58 @@ const Card = ({ icon, gradient, progressColor, topText, mainValue, bottomText, p
 };
 
 export default function DashboardCards() {
+  const { getTaskStats, tasks } = useContext(TaskContext);
+  const stats = getTaskStats();
+
+  // Calculate progress percentages
+  const readyToAssignProgress = tasks.length > 0 ? Math.round((stats.readyToAssign / tasks.length) * 100) : 0;
+  const completedProgress = tasks.length > 0 ? Math.round((stats.completed / tasks.length) * 100) : 0;
+  const hoursLoggedProgress = Math.min(Math.round((stats.totalHoursLogged / (tasks.length * 10)) * 100), 100);
+  const meetingsProgress = stats.scheduled > 0 ? 100 : 0;
+
+  const cards = [
+    {
+      id: 1,
+      icon: <FaUserAlt size={26} />,
+      gradient: "card-gradient-purple",
+      progressColor: "text-purple-400",
+      topText: "Ready to Assign",
+      mainValue: stats.readyToAssign,
+      bottomText: `Total: ${tasks.length} tasks`,
+      progress: readyToAssignProgress,
+    },
+    {
+      id: 2,
+      icon: <FaThLarge size={26} />,
+      gradient: "card-gradient-green",
+      progressColor: "text-green-400",
+      topText: "Tasks Completed",
+      mainValue: `${stats.completed} / ${tasks.length}`,
+      bottomText: `Remaining: ${tasks.length - stats.completed}`,
+      progress: completedProgress,
+    },
+    {
+      id: 3,
+      icon: <FaClock size={26} />,
+      gradient: "card-gradient-amber",
+      progressColor: "text-amber-400",
+      topText: "Hours Logged",
+      mainValue: `${stats.totalHoursLogged}h`,
+      bottomText: `Target: ${tasks.length * 10}h`,
+      progress: hoursLoggedProgress,
+    },
+    {
+      id: 4,
+      icon: <FaVideo size={26} />,
+      gradient: "card-gradient-cyan",
+      progressColor: "text-yellow-300",
+      topText: "Meetings Scheduled",
+      mainValue: `${stats.scheduled} Scheduled`,
+      bottomText: `Status: Active`,
+      progress: meetingsProgress,
+    },
+  ];
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-4 gap-6">
